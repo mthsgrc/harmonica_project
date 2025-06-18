@@ -1,52 +1,54 @@
-from playwright.sync_api import sync_playwright
+import cloudscraper
 from pathlib import Path
 import time
+import random
+import re
 
 def download_tab(tab_id: int):
     url = f"https://www.harptabs.com/song.php?ID={tab_id}"
     output_path = Path(f"data/raw/{tab_id}.html")
     
-    with sync_playwright() as p:
-        # Use Firefox for better stealth (chromium has detectable automation flags)
-        browser = p.firefox.launch(headless=True)
-        context = browser.new_context(
-            user_agent="Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0",
-            extra_http_headers={
-                "Accept-Language": "en-US,en;q=0.5",
-                "Referer": "https://www.harptabs.com/",
-                "DNT": "1"
-            }
-        )
+    # Create cloudscraper instance
+    scraper = cloudscraper.create_scraper(
+        browser={
+            'browser': 'firefox',
+            'platform': 'linux',
+            'desktop': True
+        }
+    )
+    
+    try:
+        # First request to establish session
+        scraper.get("https://www.harptabs.com/", timeout=15)
+        time.sleep(random.uniform(1.0, 3.0))  # Random delay
         
-        page = context.new_page()
+        # Target request
+        response = scraper.get(url, timeout=30)
         
-        try:
-            # Navigate to index first to establish session
-            page.goto("https://www.harptabs.com/", timeout=15000)
-            time.sleep(2)
+        # Validate response
+        if response.status_code != 200:
+            raise Exception(f"HTTP {response.status_code}: {response.reason}")
             
-            # Navigate to target page
-            page.goto(url, timeout=20000)
+        # Check for blocking patterns
+        if any(pattern in response.text for pattern in ['Forbidden', 'Access Denied', 'Cloudflare']):
+            raise Exception("Blocking mechanism detected in content")
             
-            # Check for blocking mechanisms
-            if "403 Forbidden" in page.content() or "Access Denied" in page.content():
-                raise Exception("Blocking page detected")
+        # Validate content structure
+        if not re.search(r'<table.*?>.*?<td class="heading".*?>', response.text, re.DOTALL):
+            raise Exception("Essential table structure not found")
             
-            # Wait for essential content
-            page.wait_for_selector("table[width='100%']", timeout=10000)
-            
-            # Save HTML
-            content = page.content()
-            output_path.write_text(content, encoding="utf-8")
-            print(f"✅ Success: {output_path}")
-            
-        except Exception as e:
-            print(f"❌ Critical error for ID {tab_id}: {str(e)}")
-            return False
-            
-        finally:
-            browser.close()
-    return True
+        # Save content
+        output_path.write_text(response.text, encoding='utf-8')
+        print(f"✅ Success: {output_path}")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error for ID {tab_id}: {str(e)}")
+        # Save partial content for debugging
+        if 'response' in locals():
+            output_path.write_text(response.text, encoding='utf-8')
+            print(f"⚠️ Saved partial content to {output_path}")
+        return False
 
 if __name__ == "__main__":
     download_tab(30368)
