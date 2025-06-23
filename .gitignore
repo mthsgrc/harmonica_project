@@ -1,3 +1,8 @@
+# Main Harp tabs
+harmonica_tabs/
+data/raw/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
