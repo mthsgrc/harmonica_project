@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmonica Tabs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1><a href="{{ url_for('routes.index') }}">Harmonica Tabs</a></h1>
+        <form action="{{ url_for('routes.search') }}" method="get">
+            <input type="text" name="q" placeholder="Search tabs..." value="{{ request.args.get('q', '') }}">
+            <button type="submit">Search</button>
+        </form>
+    </header>
+    
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer>
+        <p>Harmonica Tabs Database &copy; {{ current_year }}</p>
+    </footer>
+</body>
+</html>

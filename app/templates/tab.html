@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="tab-detail">
+        <h2>{{ tab.song }}</h2>
+        <h3>by {{ tab.artist }}</h3>
+        
+        <div class="tab-metadata">
+            <p><strong>Key:</strong> {{ tab.key }} | <strong>Harp Type:</strong> {{ tab.harp_type }}</p>
+            <p><strong>Difficulty:</strong> {{ tab.difficulty }} | <strong>Genre:</strong> {{ tab.genre }}</p>
+            {% if tab.youtube_link %}
+                <p><a href="{{ tab.youtube_link }}" target="_blank">Watch on YouTube</a></p>
+            {% endif %}
+        </div>
+        
+        <div class="tab-content">
+            <pre>{{ tab.content }}</pre>
+        </div>
+    </div>
+    
+    <p><a href="{{ url_for('routes.index') }}">&larr; Back to all tabs</a></p>
+{% endblock %}

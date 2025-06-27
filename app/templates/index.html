@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>{% if query %}Search Results for "{{ query }}"{% else %}All Tabs{% endif %}</h2>
+    
+    <div class="tabs-list">
+        {% for tab in tabs.items %}
+            <div class="tab-card">
+                <h3><a href="{{ url_for('routes.view_tab', tab_id=tab.id) }}">{{ tab.song }}</a></h3>
+                <p><strong>Artist:</strong> {{ tab.artist }}</p>
+                <p><strong>Key:</strong> {{ tab.key }} | <strong>Harp:</strong> {{ tab.harp_type }}</p>
+            </div>
+        {% else %}
+            <p>No tabs found.</p>
+        {% endfor %}
+    </div>
+    
+    <div class="pagination">
+        {% if tabs.has_prev %}
+            <a href="{{ url_for('routes.index', page=tabs.prev_num) }}{% if query %}&q={{ query }}{% endif %}">&laquo; Previous</a>
+        {% endif %}
+        
+        {% for page_num in tabs.iter_pages() %}
+            {% if page_num %}
+                {% if tabs.page == page_num %}
+                    <strong>{{ page_num }}</strong>
+                {% else %}
+                    <a href="{{ url_for('routes.index', page=page_num) }}{% if query %}&q={{ query }}{% endif %}">{{ page_num }}</a>
+                {% endif %}
+            {% else %}
+                <span>...</span>
+            {% endif %}
+        {% endfor %}
+        
+        {% if tabs.has_next %}
+            <a href="{{ url_for('routes.index', page=tabs.next_num) }}{% if query %}&q={{ query }}{% endif %}">Next &raquo;</a>
+        {% endif %}
+    </div>
+{% endblock %}
