@@ -9,7 +9,7 @@ class Tab(db.Model):
     difficulty = db.Column(db.String(50))
     genre = db.Column(db.String(50))
     harp_type = db.Column(db.String(50), nullable=False)
-    key = db.Column(db.String(10), nullable=False)
+    harp_key = db.Column(db.String(10), nullable=False)
     content = db.Column(db.Text, nullable=False)
     youtube_link = db.Column(db.String(200))
 
