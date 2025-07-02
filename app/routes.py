@@ -69,4 +69,42 @@ def edit_tab(tab_id):
 @login_required
 def favorites():
     fav_tabs = current_user.favorites
-    return render_template('favorites.html', tabs=fav_tabs)    
+    return render_template('favorites.html', tabs=fav_tabs)  
+    
+
+@main.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', user=current_user)
+
+@main.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    current_password = request.form.get('current_password')
+    new_password = request.form.get('new_password')
+    confirm_password = request.form.get('confirm_password')
+    
+    # Validation
+    if not all([current_password, new_password, confirm_password]):
+        flash('All fields are required')
+        return redirect(url_for('main.profile'))
+    
+    if new_password != confirm_password:
+        flash('New passwords must match')
+        return redirect(url_for('main.profile'))
+    
+    if len(new_password) < 8:
+        flash('Password must be at least 8 characters')
+        return redirect(url_for('main.profile'))
+    
+    # Verify current password
+    if not check_password_hash(current_user.password_hash, current_password):
+        flash('Current password is incorrect')
+        return redirect(url_for('main.profile'))
+    
+    # Update password
+    current_user.password_hash = generate_password_hash(new_password)
+    db.session.commit()
+    
+    flash('Password updated successfully!')
+    return redirect(url_for('main.profile'))
