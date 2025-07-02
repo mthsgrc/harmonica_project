@@ -12,7 +12,6 @@ class Tab(db.Model):
     key = db.Column(db.String(10), nullable=False)
     content = db.Column(db.Text, nullable=False)
     youtube_link = db.Column(db.String(200))
-    file_path = db.Column(db.String(200))
 
     def __repr__(self):
         return f'<Tab {self.artist} - {self.song}>'

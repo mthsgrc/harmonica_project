@@ -2,6 +2,7 @@
 harmonica_tabs/
 data/raw/
 data/raw.7z
+migrations
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
