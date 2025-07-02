@@ -3,10 +3,11 @@
 # import logging
 # from flask import current_app
 
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from .decorators import admin_required, editor_required
 from .models import Tab, User, db
+from werkzeug.security import check_password_hash, generate_password_hash
 
 main = Blueprint('main', __name__)
 
@@ -93,7 +94,7 @@ def change_password():
         flash('New passwords must match')
         return redirect(url_for('main.profile'))
     
-    if len(new_password) < 8:
+    if len(new_password) < 4:
         flash('Password must be at least 8 characters')
         return redirect(url_for('main.profile'))
     

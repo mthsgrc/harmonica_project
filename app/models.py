@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
         backref=db.backref('favorited_by', lazy='dynamic'),
         lazy='dynamic'
     )
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 class Tab(db.Model):
     __tablename__ = 'tabs'

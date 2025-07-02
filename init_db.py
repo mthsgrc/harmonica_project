@@ -15,20 +15,20 @@ def init_db():
         # Create tables
         db.create_all()
         
-        # Create admin user
-        if not User.query.filter_by(username='123').first():
-            admin_pass = generate_password_hash('admin_password')
-            admin_user = User(
-                username='admin',
-                email='admin@example.com',
-                password_hash=admin_pass,
-                role='admin'
-            )
-            db.session.add(admin_user)
-            db.session.commit()
-            print("Admin user created")
-        else:
-            print("Admin user already exists")
+        # # Create admin user
+        # if not User.query.filter_by(username='123').first():
+        #     admin_pass = generate_password_hash('admin_password')
+        #     admin_user = User(
+        #         username='admin',
+        #         email='admin@example.com',
+        #         password_hash=admin_pass,
+        #         role='admin'
+        #     )
+        #     db.session.add(admin_user)
+        #     db.session.commit()
+        #     print("Admin user created")
+        # else:
+        #     print("Admin user already exists")
 
 if __name__ == '__main__':
     init_db()
