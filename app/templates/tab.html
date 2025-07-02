@@ -17,6 +17,20 @@
             <pre>{{ tab.content }}</pre>
         </div>
     </div>
+    {% for tab in tabs %}
+    <div class="tab">
+        <h3>{{ tab.artist }} - {{ tab.song }}</h3>
+        <form method="POST" action="{{ url_for('main.favorite_tab', tab_id=tab.id) }}">
+            <button type="submit">
+                {% if tab in current_user.favorites %}★{% else %}☆{% endif %}
+            </button>
+        </form>
+        {% if current_user.role in ['admin', 'editor'] %}
+            <a href="{{ url_for('main.edit_tab', tab_id=tab.id) }}">Edit</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <p><a href="{{ url_for('main.index') }}">&larr; Back to all tabs</a></p>
     
-    <p><a href="{{ url_for('routes.index') }}">&larr; Back to all tabs</a></p>
 {% endblock %}

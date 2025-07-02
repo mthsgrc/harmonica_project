@@ -1,3 +1,5 @@
-flask
-flask-sqlalchemy
 beautifulsoup4
+flask
+flask-login
+flask-sqlalchemy
+werkzeug
