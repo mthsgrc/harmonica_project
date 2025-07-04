@@ -1,0 +1,85 @@
+{% extends "base.html" %} {% block content %}
+
+<h2>Your Profile</h2>
+
+<!-- Profile info section -->
+<div class="profile-info">
+  <p>Username: {{ current_user.username }}</p>
+  <p>Email: {{ current_user.email }}</p>
+</div>
+
+<!-- Favorites section -->
+<h3>Your Favorite Tabs </h3>
+
+{% if tabs %}
+<form method="POST" action="{{ url_for('main.bulk_favorite_action') }}">
+  <div class="bulk-actions">
+    <button type="submit" name="action" value="remove" class="btn btn-danger">
+      Remove Selected
+    </button>
+    <button
+      type="submit"
+      name="action"
+      value="download"
+      class="btn btn-primary"
+    >
+      Download Selected
+    </button>
+  </div>
+
+  <div class="favorites-list">
+    {% for tab in tabs %}
+    <div class="favorite-tab card">
+      <div class="card-body">
+        <input
+          type="checkbox"
+          name="tab_ids"
+          value="{{ tab.id }}"
+          id="tab-{{ tab.id }}"
+          class="favorite-checkbox"
+        />
+        <label for="tab-{{ tab.id }}">
+          <h4>{{ tab.artist }} - {{ tab.song }}</h4>
+          <p>Key: {{ tab.harp_key }} | Type: {{ tab.harp_type }}</p>
+        </label>
+        <div class="tab-actions">
+          <a
+            href="{{ url_for('main.tab_detail', tab_id=tab.id) }}"
+            class="btn btn-sm btn-outline-primary"
+          >
+            View Tab
+          </a>
+          <a
+            href="{{ url_for('main.toggle_favorite', tab_id=tab.id) }}"
+            class="btn btn-sm btn-outline-danger"
+          >
+            ★ Remove
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</form>
+{% else %}
+<p>You haven't favorited any tabs yet.</p>
+{% endif %}
+
+<!-- Sorting options -->
+<div class="sort-options mt-3">
+  <span>Sort by:</span>
+  <a
+    href="{{ url_for('main.profile', sort='recent') }}"
+    class="btn btn-sm {% if sort_by == 'recent' %}btn-primary{% else %}btn-outline-secondary{% endif %}"
+  >
+    Recently Added
+  </a>
+  <a
+    href="{{ url_for('main.profile', sort='artist') }}"
+    class="btn btn-sm {% if sort_by == 'artist' %}btn-primary{% else %}btn-outline-secondary{% endif %}"
+  >
+    Artist
+  </a>
+</div>
+
+{% endblock %}

@@ -3,7 +3,7 @@
 # import logging
 # from flask import current_app
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from .decorators import admin_required, editor_required
 from .models import Tab, User, db
@@ -57,6 +57,23 @@ def favorite_tab(tab_id):
     db.session.commit()
     return redirect(request.referrer or url_for('main.index'))
 
+
+@main.route('/toggle_favorite/<int:tab_id>', methods=['POST'])
+@login_required
+def toggle_favorite(tab_id):
+    tab = Tab.query.get_or_404(tab_id)
+    if tab in current_user.favorites:
+        current_user.favorites.remove(tab)
+        action = 'removed'
+    else:
+        current_user.favorites.append(tab)
+        action = 'added'
+    db.session.commit()
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({'status': 'success', 'action': action})
+    return redirect(request.referrer or url_for('main.index'))
+
 @main.route('/edit/<int:tab_id>', methods=['GET', 'POST'])
 @editor_required
 def edit_tab(tab_id):
@@ -76,7 +93,19 @@ def favorites():
 @main.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html', user=current_user)
+    sort_by = request.args.get('sort', 'recent')  # Get sort parameter or default to 'recent'
+    
+    # Get favorites with eager loading to prevent N+1 query problem
+    user = User.query.options(db.joinedload(User.favorites)).get(current_user.id)
+    
+    if sort_by == 'artist':
+        favorites = sorted(user.favorites, key=lambda x: (x.artist.lower(), x.song.lower()))
+    else:  # recent
+        favorites = sorted(user.favorites, key=lambda x: x.id, reverse=True)
+    
+    return render_template('profile.html', 
+                         favorites=favorites,
+                         sort_by=sort_by)
 
 @main.route('/change_password', methods=['POST'])
 @login_required
@@ -108,4 +137,28 @@ def change_password():
     db.session.commit()
     
     flash('Password updated successfully!')
+    return redirect(url_for('main.profile'))
+
+@main.route('/profile/bulk_favorites', methods=['POST'])
+@login_required
+def bulk_favorite_action():
+    tab_ids = request.form.getlist('tab_ids')
+    action = request.form.get('action')
+    
+    if not tab_ids:
+        flash('No tabs selected', 'warning')
+        return redirect(url_for('main.profile'))
+    
+    tabs = Tab.query.filter(Tab.id.in_(tab_ids)).all()
+    
+    if action == 'remove':
+        for tab in tabs:
+            if tab in current_user.favorites:
+                current_user.favorites.remove(tab)
+        db.session.commit()
+        flash(f'Removed {len(tabs)} tabs from favorites', 'success')
+    elif action == 'download':
+        # Implement download logic here
+        flash('Download feature coming soon!', 'info')
+    
     return redirect(url_for('main.profile'))

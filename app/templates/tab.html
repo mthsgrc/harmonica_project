@@ -17,20 +17,42 @@
             <pre>{{ tab.content }}</pre>
         </div>
     </div>
-    {% for tab in tabs %}
-    <div class="tab">
-        <h3>{{ tab.artist }} - {{ tab.song }}</h3>
-        <form method="POST" action="{{ url_for('main.favorite_tab', tab_id=tab.id) }}">
-            <button type="submit">
-                {% if tab in current_user.favorites %}★{% else %}☆{% endif %}
-            </button>
-        </form>
-        {% if current_user.role in ['admin', 'editor'] %}
-            <a href="{{ url_for('main.edit_tab', tab_id=tab.id) }}">Edit</a>
-        {% endif %}
-    </div>
-    {% endfor %}
+    <!-- Favorite Button -->
+    <form method="POST" action="{{ url_for('main.toggle_favorite', tab_id=tab.id) }}">
+        <button type="submit" class="favorite-btn">
+            {% if current_user.is_authenticated and tab in current_user.favorites %}
+                ★ Unfavorite
+            {% else %}
+                ☆ Favorite
+            {% endif %}
+        </button>
+    </form>
+    
+
 
     <p><a href="{{ url_for('main.index') }}">&larr; Back to all tabs</a></p>
     
+
+    <script>
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+            btn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.action === 'added') {
+                    this.innerHTML = '★ Unfavorite';
+                } else {
+                    this.innerHTML = '☆ Favorite';
+                }
+            });
+        });
+    </script>
 {% endblock %}

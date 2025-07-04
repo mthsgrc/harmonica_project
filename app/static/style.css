@@ -187,3 +187,45 @@ footer {
 }
 
 
+/* Bulk actions styling */
+.bulk-actions {
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 5px;
+}
+
+/* Favorites list improvements */
+.favorites-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.favorite-tab {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    transition: all 0.2s;
+}
+
+.favorite-tab:hover {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.favorite-checkbox {
+    margin-right: 10px;
+}
+
+.tab-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .favorites-list {
+        grid-template-columns: 1fr;
+    }
+}
