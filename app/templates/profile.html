@@ -1,4 +1,5 @@
 {% extends "base.html" %} {% block content %}
+
 <div class="profile-container">
   <h2>User Profile</h2>
 
@@ -9,12 +10,7 @@
     <!-- <p><strong>Member since:</strong> {{ user.created_at.strftime('%Y-%m-%d') }}</p> -->
   </div>
 
-  <!-- Profile info section -->
-  <div class="profile-info">
-    <p>Username: {{ current_user.username }}</p>
-    <p>Email: {{ current_user.email }}</p>
-  </div>
-
+<hr>
   <!-- Favorites section -->
   <h3>Your Favorite Tabs ({{ favorites|length }})</h3>
 
@@ -51,7 +47,7 @@
           </label>
           <div class="tab-actions">
             <a
-              href="{{ url_for('main.tab_detail', tab_id=tab.id) }}"
+              href="{{ url_for('main.view_tab', tab_id=tab.id) }}"
               class="btn btn-sm btn-outline-primary"
             >
               View Tab

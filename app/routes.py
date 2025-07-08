@@ -105,7 +105,9 @@ def profile():
     
     return render_template('profile.html', 
                          favorites=favorites,
-                         sort_by=sort_by)
+                         sort_by=sort_by,
+                         user=user,
+                         )
 
 @main.route('/change_password', methods=['POST'])
 @login_required
