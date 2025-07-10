@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block content %}
 
-<h2>Your Profile</h2>
+<h2>Profile</h2>
 
 <!-- Profile info section -->
 <div class="profile-info">
@@ -13,7 +13,7 @@
 {% if favorites %}
 
 <!-- Favorites section -->
-<h3>Your Favorite Tabs</h3>
+<h3>Your Favorite Tabs ( {{ favorites|length }} ) </h3>
 
 <form method="POST" action="{{ url_for('main.bulk_favorite_action') }}">
   <div class="bulk-actions">
@@ -33,8 +33,6 @@
   <div class="favorites-list">
     {% for tab in favorites %}
 
-
-    {{ tab }}
 
     <div class="favorite-tab card">
       <div class="card-body">

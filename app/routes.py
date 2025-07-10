@@ -100,8 +100,12 @@ def favorites():
         favorites = sorted(user.favorites, key=lambda x: (x.artist.lower(), x.song.lower()))
     else:  # recent
         favorites = sorted(user.favorites, key=lambda x: x.id, reverse=True)
-    fav_tabs = current_user.favorites
-    return render_template('favorites.html', favorites=fav_tabs)
+    
+    return render_template('favorites.html', 
+                         favorites=favorites,
+                         sort_by=sort_by,
+                         user=user,
+                         )
 
 
 @main.route('/profile')
