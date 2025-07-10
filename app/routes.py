@@ -22,10 +22,12 @@ def index():
     tabs = Tab.query.paginate(page=page, per_page=25)
     return render_template('index.html', tabs=tabs)
 
+
 @main.route('/tab/<int:tab_id>')
 def view_tab(tab_id):
     tab = Tab.query.get_or_404(tab_id)
     return render_template('tab.html', tab=tab)
+
 
 @main.route('/search')
 def search():
@@ -45,6 +47,7 @@ def search():
         results = Tab.query.paginate(page=page, per_page=per_page)
     
     return render_template('index.html', tabs=results, query=query)
+
 
 @main.route('/favorite/<int:tab_id>', methods=['POST'])
 @login_required
@@ -74,6 +77,7 @@ def toggle_favorite(tab_id):
         return jsonify({'status': 'success', 'action': action})
     return redirect(request.referrer or url_for('main.index'))
 
+
 @main.route('/edit/<int:tab_id>', methods=['GET', 'POST'])
 @editor_required
 def edit_tab(tab_id):
@@ -83,12 +87,22 @@ def edit_tab(tab_id):
         pass
     return render_template('edit_tab.html', tab=tab)
 
+
 @main.route('/favorites')
 @login_required
 def favorites():
-    fav_tabs = current_user.favorites
-    return render_template('favorites.html', tabs=fav_tabs)  
+    sort_by = request.args.get('sort', 'recent')  # Get sort parameter or default to 'recent'
     
+    # Get favorites with eager loading to prevent N+1 query problem
+    user = User.query.options(db.joinedload(User.favorites)).get(current_user.id)
+    
+    if sort_by == 'artist':
+        favorites = sorted(user.favorites, key=lambda x: (x.artist.lower(), x.song.lower()))
+    else:  # recent
+        favorites = sorted(user.favorites, key=lambda x: x.id, reverse=True)
+    fav_tabs = current_user.favorites
+    return render_template('favorites.html', favorites=fav_tabs)
+
 
 @main.route('/profile')
 @login_required
@@ -109,6 +123,7 @@ def profile():
                          user=user,
                          )
 
+
 @main.route('/change_password', methods=['POST'])
 @login_required
 def change_password():
@@ -126,7 +141,7 @@ def change_password():
         return redirect(url_for('main.profile'))
     
     if len(new_password) < 4:
-        flash('Password must be at least 8 characters')
+        flash('Password must be at least 4 characters')
         return redirect(url_for('main.profile'))
     
     # Verify current password
@@ -140,6 +155,7 @@ def change_password():
     
     flash('Password updated successfully!')
     return redirect(url_for('main.profile'))
+
 
 @main.route('/profile/bulk_favorites', methods=['POST'])
 @login_required

@@ -7,11 +7,14 @@
   <p>Username: {{ current_user.username }}</p>
   <p>Email: {{ current_user.email }}</p>
 </div>
+<hr>
+<br>
+
+{% if favorites %}
 
 <!-- Favorites section -->
-<h3>Your Favorite Tabs </h3>
+<h3>Your Favorite Tabs</h3>
 
-{% if tabs %}
 <form method="POST" action="{{ url_for('main.bulk_favorite_action') }}">
   <div class="bulk-actions">
     <button type="submit" name="action" value="remove" class="btn btn-danger">
@@ -28,7 +31,11 @@
   </div>
 
   <div class="favorites-list">
-    {% for tab in tabs %}
+    {% for tab in favorites %}
+
+
+    {{ tab }}
+
     <div class="favorite-tab card">
       <div class="card-body">
         <input
@@ -68,14 +75,16 @@
 <!-- Sorting options -->
 <div class="sort-options mt-3">
   <span>Sort by:</span>
+  <br>
   <a
-    href="{{ url_for('main.profile', sort='recent') }}"
+    href="{{ url_for('main.favorites', sort='recent') }}"
     class="btn btn-sm {% if sort_by == 'recent' %}btn-primary{% else %}btn-outline-secondary{% endif %}"
   >
     Recently Added
   </a>
+  <br>
   <a
-    href="{{ url_for('main.profile', sort='artist') }}"
+    href="{{ url_for('main.favorites', sort='artist') }}"
     class="btn btn-sm {% if sort_by == 'artist' %}btn-primary{% else %}btn-outline-secondary{% endif %}"
   >
     Artist
