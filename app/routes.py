@@ -68,9 +68,11 @@ def toggle_favorite(tab_id):
     if tab in current_user.favorites:
         current_user.favorites.remove(tab)
         action = 'removed'
+        flash(f'Removed {tab.song} from favorites', 'info')
     else:
         current_user.favorites.append(tab)
         action = 'added'
+        flash(f'Removed {tab.song} from favorites', 'info')
     db.session.commit()
     
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
