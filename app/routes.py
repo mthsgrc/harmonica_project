@@ -90,7 +90,7 @@ def edit_tab(tab_id):
     return render_template('edit_tab.html', tab=tab)
 
 
-@main.route('/favorites')
+@main.route('/favorites', methods=['GET', 'POST'])
 @login_required
 def favorites():
     sort_by = request.args.get('sort', 'recent')  # Get sort parameter or default to 'recent'
