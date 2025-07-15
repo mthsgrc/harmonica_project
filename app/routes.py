@@ -1,7 +1,4 @@
-# from flask import Blueprint, render_template, request
-# from app.models import Tab
 # import logging
-# from flask import current_app
 
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user

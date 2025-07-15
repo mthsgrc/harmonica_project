@@ -13,7 +13,7 @@
     <header>
         <h1><a href="{{ url_for('main.index') }}">Harmonica Tabs</a></h1>
         <form action="{{ url_for('main.search') }}" method="get">
-            <input type="search" name="q" placeholder="Search tabs..." value="{{ request.args.get('q', '') }}">
+            <input autofocus type="search" name="q" placeholder="Search tabs..." value="{{ request.args.get('q', '') }}">
             <button type="submit">Search</button>
         </form>
 

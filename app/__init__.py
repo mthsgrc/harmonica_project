@@ -31,7 +31,7 @@ def create_app(config_class=Config):
     app.register_blueprint(main)
     app.register_blueprint(auth, url_prefix='/auth')
 
-    from .admin import admin_bp
+    from .admin.admin import admin_bp
     app.register_blueprint(admin_bp)
     
     # Context processor for current year
