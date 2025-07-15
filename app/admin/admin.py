@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, flash, render_template, redirect, request, url_for
 from flask_login import login_required, current_user
 from app.decorators import admin_required
 from app.models import User
@@ -19,9 +19,13 @@ def index():
 @admin_required
 def manage_users():
     page = request.args.get('page', 1, type=int)
-    per_page = 25  
-    users = User.query.order_by(User.username).all()
-    return render_template('admin/users.html', users=users)    
+
+    users = User.query.order_by(User.username).paginate(
+        page=page,
+        per_page = 10  
+    )
+
+    return render_template('admin/users.html', users=users.items,pagination=users)    
 
 
 @admin_bp.route('/user/<int:user_id>', methods=['GET', 'POST'])

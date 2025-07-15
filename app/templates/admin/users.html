@@ -19,10 +19,7 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.role }}</td>
-                <td>
-                    <a href="#" class="btn btn-sm btn-primary">Edit</a>
-                    <a href="#" class="btn btn-sm btn-danger">Delete</a>
-                </td>
+
                 <td>
                   <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" 
                      class="btn btn-sm btn-primary">Edit</a>
@@ -41,19 +38,19 @@
     <!-- Add pagination at bottom of table -->
     <nav>
       <ul class="pagination">
-          {% if users.has_prev %}
+          {% if pagination.has_prev %}
           <li class="page-item">
               <a class="page-link" href="{{ url_for('admin.manage_users', page=users.prev_num) }}">Previous</a>
           </li>
           {% endif %}
           
-          {% for page_num in users.iter_pages() %}
+          {% for page_num in pagination.iter_pages() %}
           <li class="page-item {% if page_num == users.page %}active{% endif %}">
               <a class="page-link" href="{{ url_for('admin.manage_users', page=page_num) }}">{{ page_num }}</a>
           </li>
           {% endfor %}
           
-          {% if users.has_next %}
+          {% if pagination.has_next %}
           <li class="page-item">
               <a class="page-link" href="{{ url_for('admin.manage_users', page=users.next_num) }}">Next</a>
           </li>
