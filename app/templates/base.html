@@ -23,6 +23,9 @@
                 <a href="{{ url_for('auth.logout') }}">Logout</a>
                 <a href="{{ url_for('main.favorites') }}">My Favorites</a>
                 <a href="{{ url_for('main.profile') }}">My Profile</a>
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                    <a class="nav-item nav-link" href="{{ url_for('admin.index') }}">Admin</a>
+                {% endif %}
             {% else %}
                 <a href="{{ url_for('auth.login') }}">Login</a>
                 <a href="{{ url_for('auth.register') }}">Register</a>              
