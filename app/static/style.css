@@ -229,3 +229,22 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+.search-container {
+    position: relative;
+    display: inline-block;
+}
+
+#searchInput {
+    padding-right: 30px; /* Add padding to prevent text from overlapping with the X */
+}
+
+.clear-btn {
+    /* position: absolute; */
+    /* right: 10px; */
+    /* top: 50%; */
+    /* transform: translateY(-50%); */
+    color: gray;
+    cursor: pointer;
+    display: none; /* Hidden by default */
+}

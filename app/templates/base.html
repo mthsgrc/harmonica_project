@@ -13,7 +13,7 @@
     <header>
         <h1><a href="{{ url_for('main.index') }}">Harmonica Tabs</a></h1>
         <form action="{{ url_for('main.search') }}" method="get">
-            <input autofocus type="search" name="q" placeholder="Search tabs..." value="{{ request.args.get('q', '') }}">
+            <input id="searchbox" autofocus type="search" name="q" placeholder="Search tabs..." value="{{ request.args.get('q', '') }}"><span id="clear" class="clear-btn"">X</span>
             <button type="submit">Search</button>
         </form>
 
@@ -40,7 +40,20 @@
     <footer>
         <p>Harmonica Tabs Database &copy; {{ current_year }}</p>
     </footer>
+    
+<script>
+const searchbox = document.getElementById("searchbox");
+const clearBtn = document.getElementById("clear");
 
+searchbox.addEventListener("input", function() {
+    clearBtn.style.display = searchbox.value ? "block" : "none"; // Show or hide the 'X'
+});
+
+clearBtn.addEventListener("click", function() {
+    searchbox.value = ""; // Clear the input field
+    clearBtn.style.display = "none"; // Hide the 'X'
+});
+</script>
    
 </body>
 </html>
