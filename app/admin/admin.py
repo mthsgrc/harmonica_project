@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, render_template, redirect, request, url_for
 from flask_login import login_required, current_user
 from app.decorators import admin_required
-from app.models import User
+from app.models import User, Tab
 from .forms import EditUserForm
 from app import db
 
@@ -12,7 +12,11 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 @login_required
 @admin_required
 def index():
-    return render_template('admin/index.html')
+    tab_count = Tab.query.count()
+    user_count = User.query.count()
+    return render_template('admin/index.html', 
+                           tab_count=tab_count,
+                           user_count=user_count)
 
 @admin_bp.route('/users')
 @login_required

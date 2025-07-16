@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="tab-detail">
+    <div class="tab-header">
+        <h1>{{ tab.artist }} - {{ tab.song }}</h1>
+        <div class="tab-meta">
+            <span class="badge badge-info">{{ tab.harp_type }} Harp</span>
+            <span class="badge badge-primary">Key of {{ tab.harp_key }}</span>
+            {% if tab.difficulty %}
+            <span class="badge badge-secondary">{{ tab.difficulty|capitalize }}</span>
+            {% endif %}
+        </div>
+        
+        {% if current_user.is_authenticated %}
+        <form method="POST" action="{{ url_for('main.toggle_favorite', tab_id=tab.id) }}">
+            <button type="submit" class="btn btn-sm btn-outline-warning">
+                {% if tab in current_user.favorites %}
+                    ★ Unfavorite
+                {% else %}
+                    ☆ Favorite
+                {% endif %}
+            </button>
+        </form>
+        {% endif %}
+        
+        {% if current_user.role in ['admin', 'editor'] %}
+        <div class="tab-actions">
+            <a href="{{ url_for('main.edit_tab', tab_id=tab.id) }}" 
+               class="btn btn-sm btn-primary">Edit Tab</a>
+            <form method="POST" action="{{ url_for('main.delete_tab', tab_id=tab.id) }}" 
+                  class="d-inline" onsubmit="return confirm('Delete this tab permanently?');">
+                <button type="submit" class="btn btn-sm btn-danger">Delete Tab</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if tab.youtube_link %}
+    <div class="video-container mb-4">
+        <iframe width="100%" height="400" 
+                src="https://www.youtube.com/embed/{{ tab.youtube_link.split('v=')[1] }}" 
+                frameborder="0" allowfullscreen></iframe>
+    </div>
+    {% endif %}
+    
+    <div class="tab-content">
+        <pre>{{ tab.content }}</pre>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Manage Tabs</h1>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('main.search_tabs') }}">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" 
+                           placeholder="Search tabs..." value="{{ query or '' }}">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Artist</th>
+                    <th>Song</th>
+                    <th>Key</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tab in tabs.items %}
+                <tr>
+                    <td>{{ tab.id }}</td>
+                    <td>{{ tab.artist }}</td>
+                    <td>{{ tab.song }}</td>
+                    <td>{{ tab.harp_key }}</td>
+                    <td>{{ tab.harp_type }}</td>
+                    <td>
+                        <a href="{{ url_for('main.view_tab', tab_id=tab.id) }}" 
+                           class="btn btn-sm btn-info">View</a>
+                        <a href="{{ url_for('main.edit_tab', tab_id=tab.id) }}" 
+                           class="btn btn-sm btn-primary">Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    <nav aria-label="Tabs pagination">
+        <ul class="pagination">
+            {% if tabs.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('main.all_tabs', page=tabs.prev_num, q=query) }}">
+                    Previous
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for page_num in tabs.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=3) %}
+            {% if page_num %}
+            <li class="page-item {% if page_num == tabs.page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('main.all_tabs', page=page_num, q=query) }}">
+                    {{ page_num }}
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+            {% endfor %}
+            
+            {% if tabs.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('main.all_tabs', page=tabs.next_num, q=query) }}">
+                    Next
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    
+    <p class="text-muted">
+        Showing {{ tabs.items|length }} of {{ tabs.total }} tabs
+    </p>
+</div>
+{% endblock %}

@@ -30,6 +30,9 @@
                 <a href="{{ url_for('auth.login') }}">Login</a>
                 <a href="{{ url_for('auth.register') }}">Register</a>              
             {% endif %}
+            {% if current_user.is_authenticated and current_user.role in ['admin', 'editor'] %}
+                <a href="{{ url_for('main.all_tabs') }}">All Tabs</a>
+            {% endif %}            
         </div>
     </header>
     

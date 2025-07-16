@@ -6,7 +6,7 @@
         <h3>by {{ tab.artist }}</h3>
         
         <div class="tab-metadata">
-            <p><strong>Key:</strong> {{ tab.key }} | <strong>Harp Type:</strong> {{ tab.harp_type }}</p>
+            <p><strong>Key:</strong> {{ tab.harp_key }} | <strong>Harp Type:</strong> {{ tab.harp_type }}</p>
             <p><strong>Difficulty:</strong> {{ tab.difficulty }} | <strong>Genre:</strong> {{ tab.genre }}</p>
             {% if tab.youtube_link %}
                 <p><a href="{{ tab.youtube_link }}" target="_blank">Watch on YouTube</a></p>
@@ -16,6 +16,16 @@
         <div class="tab-content">
             <pre>{{ tab.content }}</pre>
         </div>
+        
+        {% if current_user.role in ['admin', 'editor'] %}
+        <div class="mt-3">
+            <a href="{{ url_for('main.edit_tab', tab_id=tab.id) }}" 
+            class="btn btn-primary">
+                Edit Tab
+            </a>
+        </div>
+        {% endif %}
+
     </div>
     <!-- Favorite Button -->
     <form method="POST" action="{{ url_for('main.toggle_favorite', tab_id=tab.id) }}">

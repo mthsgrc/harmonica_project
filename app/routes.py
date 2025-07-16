@@ -2,7 +2,8 @@
 
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from .decorators import admin_required, editor_required
+from .decorators import admin_required, editor_required, roles_required
+from .forms import EditTabForm
 from .models import Tab, User, db
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -16,7 +17,7 @@ main = Blueprint('main', __name__)
 @main.route('/')
 def index():
     page = request.args.get('page', 1, type=int)
-    tabs = Tab.query.paginate(page=page, per_page=25)
+    tabs = Tab.query.paginate(page=page, per_page=24)
     return render_template('index.html', tabs=tabs)
 
 
@@ -30,7 +31,7 @@ def view_tab(tab_id):
 def search():
     query = request.args.get('q', '').strip()
     page = request.args.get('page', 1, type=int)
-    per_page = 25
+    per_page = 24
     
     if query:
         # Use case-insensitive search with proper wildcards
@@ -77,14 +78,14 @@ def toggle_favorite(tab_id):
     return redirect(request.referrer or url_for('main.index'))
 
 
-@main.route('/edit/<int:tab_id>', methods=['GET', 'POST'])
-@editor_required
-def edit_tab(tab_id):
-    tab = Tab.query.get_or_404(tab_id)
-    if request.method == 'POST':
-        # Update tab logic
-        pass
-    return render_template('edit_tab.html', tab=tab)
+# @main.route('/edit/<int:tab_id>', methods=['GET', 'POST'])
+# @editor_required
+# def edit_tab(tab_id):
+#     tab = Tab.query.get_or_404(tab_id)
+#     if request.method == 'POST':
+#         # Update tab logic
+#         pass
+#     return render_template('edit_tab.html', tab=tab)
 
 
 @main.route('/favorites')
@@ -183,3 +184,58 @@ def bulk_favorite_action():
         flash('Download feature coming soon!', 'info')
     
     return redirect(url_for('main.profile'))
+
+from app.forms import EditTabForm
+from app.decorators import editor_required
+
+
+@main.route('/edit-tab/<int:tab_id>', methods=['GET', 'POST'])
+@roles_required('admin', 'editor')
+def edit_tab(tab_id):
+    tab = Tab.query.get_or_404(tab_id)
+    form = EditTabForm(obj=tab)
+    
+    if form.validate_on_submit():
+        form.populate_obj(tab)
+        db.session.commit()
+        flash('Tab updated successfully!', 'success')
+        return redirect(url_for('main.view_tab', tab_id=tab.id))
+    
+    return render_template('edit_tab.html', form=form, tab=tab)
+
+
+@main.route('/delete-tab/<int:tab_id>', methods=['POST'])
+@roles_required('admin')
+def delete_tab(tab_id):
+    tab = Tab.query.get_or_404(tab_id)
+    db.session.delete(tab)
+    db.session.commit()
+    flash(f'Tab "{tab.song}" by {tab.artist} has been deleted', 'success')
+    return redirect(url_for('main.index'))
+
+
+@main.route('/all-tabs')
+@roles_required('admin', 'editor')
+def all_tabs():
+    page = request.args.get('page', 1, type=int)
+    per_page = 50
+    tabs = Tab.query.order_by(Tab.artist, Tab.song).paginate(page=page, per_page=per_page)
+    return render_template('all_tabs.html', tabs=tabs)
+
+@main.route('/search-tabs')
+@roles_required('admin', 'editor')
+def search_tabs():
+    query = request.args.get('q', '')
+    page = request.args.get('page', 1, type=int)
+    per_page = 50
+    
+    if query:
+        tabs = Tab.query.filter(
+            Tab.artist.ilike(f'%{query}%') | 
+            Tab.song.ilike(f'%{query}%') |
+            Tab.content.ilike(f'%{query}%')
+        ).paginate(page=page, per_page=per_page)
+    else:
+        tabs = Tab.query.paginate(page=page, per_page=per_page)
+        
+    return render_template('all_tabs.html', tabs=tabs, query=query)

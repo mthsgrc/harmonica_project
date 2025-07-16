@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, DataRequired, Optional
 from app.models import User
 import re
 
@@ -25,6 +25,48 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('That email is already registered.')
+
+
+class EditTabForm(FlaskForm):
+    artist = StringField('Artist', validators=[DataRequired()])
+    song = StringField('Song', validators=[DataRequired()])
+    difficulty = SelectField('Difficulty', choices=[
+        ('', 'Select difficulty'),
+        ('beginner', 'Beginner'),
+        ('intermediate', 'Intermediate'),
+        ('advanced', 'Advanced'),
+        ('expert', 'Expert'), 
+        ('any', 'Any'),
+    ])
+    genre = StringField('Genre')
+    harp_type = SelectField('Harp Type', choices=[
+        ('Any', 'Any'),
+        ('Chromatic', 'Chromatic'),
+        ('Diatonic', 'Diatonic'),
+        ('Melody Maker', 'Melody Maker'),
+        ('Octave', 'Octave'),
+        ('Tremolo', 'Tremolo')
+    ], validators=[DataRequired()])
+    harp_key = SelectField('Key', choices=[
+        ('A', 'A'),
+        ('A#/Bb', 'A#/Bb'),
+        ('B','B'),
+        ('C','C'), 
+        ('C#/Db', 'C#/Db'), 
+        ('D','D'),
+        ('D#/Eb', 'D#/Eb'), 
+        ('E', 'E'), 
+        ('F', 'F'), 
+        ('F#/Gb', 'F#/Gb'), 
+        ('G', 'G'), 
+        ('G#/Ab', 'G#/Ab'), 
+        ('Any', 'Any'),
+        ('Unknown', 'Unknown')
+    ], validators=[DataRequired()])
+    content = TextAreaField('Tab Content', validators=[DataRequired()])
+    youtube_link = StringField('YouTube Link')
+    submit = SubmitField('Update Tab')
+
 
 ########   Add to RegistrationForm class  #######
 ########  Add Password Strength Validation (Optional)   #######
