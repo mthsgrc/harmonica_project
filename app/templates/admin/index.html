@@ -2,29 +2,24 @@
 <div class="container mt-4">
   <h1>Admin Dashboard</h1>
   <div class="list-group">
-    <a
-      href="{{ url_for('admin.manage_users') }}"
-      class="list-group-item list-group-item-action"
-    >
-      Manage Users </a
-    ><br />
-
+    <hr>
     <div class="row mb-4">
       <div class="col-md-6">
         <div class="card text-white bg-primary mb-3">
           <div class="card-body">
-            <h5 class="card-title">Tabs</h5>
-            <p class="card-text display-4">{{ tab_count }}</p>
+            <h4 class="card-title">Tabs</h4>
+            <p class="card-text display-4">Total Tabs: {{ tab_count }}</p>
             <a href="{{ url_for('main.all_tabs') }}" class="text-white"
               >Manage Tabs</a
             >
           </div>
         </div>
       </div>
+      <br>
       <div class="col-md-6">
         <div class="card text-white bg-success mb-3">
           <div class="card-body">
-            <h5 class="card-title">Users</h5>
+            <h4 class="card-title">Users</h4>
             <p class="card-text display-4">{{ user_count }}</p>
             <a href="{{ url_for('admin.manage_users') }}" class="text-white"
               >Manage Users</a
