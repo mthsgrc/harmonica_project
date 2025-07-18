@@ -5,7 +5,7 @@ from flask_login import LoginManager
 from config import Config  # Import directly from config
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
-
+from flask_markdown import markdown
 
 csrf = CSRFProtect()
 
@@ -38,5 +38,8 @@ def create_app(config_class=Config):
     @app.context_processor
     def inject_current_year():
         return {'current_year': datetime.now().year}
+    
+    markdown(app)
+    
     
     return app

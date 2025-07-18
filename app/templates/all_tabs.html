@@ -38,6 +38,7 @@
                     <td>{{ tab.harp_key }}</td>
                     <td>{{ tab.harp_type }}</td>
                     <td>
+                        <a class=""btn btn-sm btn-info" href="{{ url_for('main.add_tab') }}">Add Tab</a>
                         <a href="{{ url_for('main.view_tab', tab_id=tab.id) }}" 
                            class="btn btn-sm btn-info">View</a>
                         <a href="{{ url_for('main.edit_tab', tab_id=tab.id) }}" 

@@ -2,10 +2,13 @@
 
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
+from app.forms import BulkImportForm
 from .decorators import admin_required, editor_required, roles_required
-from .forms import EditTabForm
+from .forms import EditTabForm, AddTabForm
 from .models import Tab, User, db
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
+
 
 main = Blueprint('main', __name__)
 
@@ -222,6 +225,7 @@ def all_tabs():
     tabs = Tab.query.order_by(Tab.artist, Tab.song).paginate(page=page, per_page=per_page)
     return render_template('all_tabs.html', tabs=tabs)
 
+
 @main.route('/search-tabs')
 @roles_required('admin', 'editor')
 def search_tabs():
@@ -239,3 +243,69 @@ def search_tabs():
         tabs = Tab.query.paginate(page=page, per_page=per_page)
         
     return render_template('all_tabs.html', tabs=tabs, query=query)
+
+
+@main.route('/add-tab', methods=['GET', 'POST'])
+@roles_required('admin', 'editor')
+def add_tab():
+    form = AddTabForm()
+    
+    if form.validate_on_submit():
+        new_tab = Tab(
+            artist=form.artist.data,
+            song=form.song.data,
+            difficulty=form.difficulty.data,
+            genre=form.genre.data,
+            harp_type=form.harp_type.data,
+            harp_key=form.harp_key.data,
+            content=form.content.data,
+            youtube_link=form.youtube_link.data,
+            created_at=datetime.utcnow()
+        )
+        db.session.add(new_tab)
+        db.session.commit()
+        flash(f'Tab "{form.song.data}" by {form.artist.data} added successfully!', 'success')
+        return redirect(url_for('main.tab_detail', tab_id=new_tab.id))
+    
+    return render_template('add_tab.html', form=form)
+
+@main.route('/bulk-import', methods=['GET', 'POST'])
+@roles_required('admin')
+def bulk_import():
+    form = BulkImportForm()
+    
+    if form.validate_on_submit():
+        lines = form.import_data.data.split('\n')
+        imported = 0
+        errors = []
+        
+        for i, line in enumerate(lines, 1):
+            parts = line.split('|')
+            if len(parts) < 5:
+                errors.append(f"Line {i}: Not enough fields")
+                continue
+                
+            try:
+                new_tab = Tab(
+                    artist=parts[0].strip(),
+                    song=parts[1].strip(),
+                    harp_key=parts[2].strip(),
+                    harp_type=parts[3].strip(),
+                    content=parts[4].strip(),
+                    created_at=datetime.utcnow()
+                )
+                db.session.add(new_tab)
+                imported += 1
+            except Exception as e:
+                errors.append(f"Line {i}: {str(e)}")
+        
+        db.session.commit()
+        flash(f'Successfully imported {imported} tabs. {len(errors)} errors occurred.', 
+              'success' if not errors else 'warning')
+        
+        if errors:
+            flash('Errors:<br>' + '<br>'.join(errors), 'error')
+        
+        return redirect(url_for('main.all_tabs'))
+    
+    return render_template('bulk_import.html', form=form)    

@@ -314,3 +314,22 @@ form .form-group {
 form label {
     font-weight: 500;
 }
+
+/* Add Tab Form Styles */
+.form-group label.required:after {
+    content: " *";
+    color: #dc3545;
+}
+
+/* YouTube preview */
+#youtube-preview {
+    margin-top: 10px;
+    display: none;
+}
+
+/* Tab content textarea */
+#content {
+    font-family: monospace;
+    font-size: 15px;
+    line-height: 1.5;
+}

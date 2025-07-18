@@ -7,6 +7,7 @@
     <title>Harmonica Tabs</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 </head>
 <body>
@@ -24,15 +25,17 @@
                 <a href="{{ url_for('main.favorites') }}">My Favorites</a>
                 <a href="{{ url_for('main.profile') }}">My Profile</a>
                 {% if current_user.is_authenticated and current_user.role == 'admin' %}
-                    <a class="nav-item nav-link" href="{{ url_for('admin.index') }}">Admin</a>
+                    <a href="{{ url_for('admin.index') }}">Admin</a>
+                    <a href="{{ url_for('main.bulk_import') }}">Bulk Import</a>
                 {% endif %}
             {% else %}
                 <a href="{{ url_for('auth.login') }}">Login</a>
                 <a href="{{ url_for('auth.register') }}">Register</a>              
             {% endif %}
             {% if current_user.is_authenticated and current_user.role in ['admin', 'editor'] %}
-                <a href="{{ url_for('main.all_tabs') }}">All Tabs</a>
-            {% endif %}            
+                <a href="{{ url_for('main.all_tabs') }}">All Tabs</a><br>
+                <a href="{{ url_for('main.add_tab') }}">Add Tab</a>
+            {% endif %}
         </div>
     </header>
     

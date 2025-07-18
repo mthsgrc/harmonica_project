@@ -30,6 +30,7 @@ class Tab(db.Model):
     content = db.Column(db.Text, nullable=False)
     youtube_link = db.Column(db.String)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     favorites = db.relationship('Favorite', backref='tab', lazy='dynamic')
 
 class Favorite(db.Model):

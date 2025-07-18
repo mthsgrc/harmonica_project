@@ -1,5 +1,8 @@
 beautifulsoup4
+dotenv
 flask
 flask-login
+Flask-Markdown2
 flask-sqlalchemy
+flask_wtf
 werkzeug

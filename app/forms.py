@@ -1,8 +1,8 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
-from wtforms.validators import ValidationError, DataRequired, Optional
 from app.models import User
+from flask_wtf import FlaskForm
+# from sqlalchemy.engine import URL
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, Optional, URL, Regexp
 import re
 
 class RegistrationForm(FlaskForm):
@@ -67,7 +67,69 @@ class EditTabForm(FlaskForm):
     youtube_link = StringField('YouTube Link')
     submit = SubmitField('Update Tab')
 
+class AddTabForm(FlaskForm):
+    artist = StringField('Artist', validators=[DataRequired(), Length(max=200)])
+    song = StringField('Song Title', validators=[DataRequired(), Length(max=200)])
+    difficulty = SelectField('Difficulty', choices=[
+        ('', 'Select difficulty'),
+        ('beginner', 'Beginner'),
+        ('intermediate', 'Intermediate'),
+        ('advanced', 'Advanced'),
+        ('expert', 'Expert'), 
+        ('any', 'Any'),
+    ], validators=[Optional()])
+    genre = StringField('Genre', validators=[Optional(), Length(max=100)])
+    harp_type = SelectField('Harp Type', choices=[
+        ('Any', 'Any'),
+        ('Chromatic', 'Chromatic'),
+        ('Diatonic', 'Diatonic'),
+        ('Melody Maker', 'Melody Maker'),
+        ('Octave', 'Octave'),
+        ('Tremolo', 'Tremolo')
+    ], validators=[DataRequired()])
+    harp_key = SelectField('Harp Key', choices=[
+        ('A', 'A'),
+        ('A#/Bb', 'A#/Bb'),
+        ('B','B'),
+        ('C','C'), 
+        ('C#/Db', 'C#/Db'), 
+        ('D','D'),
+        ('D#/Eb', 'D#/Eb'), 
+        ('E', 'E'), 
+        ('F', 'F'), 
+        ('F#/Gb', 'F#/Gb'), 
+        ('G', 'G'), 
+        ('G#/Ab', 'G#/Ab'), 
+        ('Any', 'Any'),
+        ('Unknown', 'Unknown')
+    ], validators=[DataRequired()])
+    content = TextAreaField('Tab Content', validators=[DataRequired()])
+    youtube_link = StringField('YouTube Link', validators=[
+        Optional(), 
+        URL(message='Please enter a valid URL'),
+        Regexp(r'(youtube\.com|youtu\.be)', message='Must be a YouTube URL')
+    ])
+    submit = SubmitField('Add Tab')
 
+class BulkImportForm(FlaskForm):
+    import_data = TextAreaField('Import Data', validators=[DataRequired()], 
+                               description="Format: Artist|Song|Key|Type|Content")
+    submit = SubmitField('Import Tabs')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 ########   Add to RegistrationForm class  #######
 ########  Add Password Strength Validation (Optional)   #######
 

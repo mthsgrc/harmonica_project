@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Bulk Import Tabs</h1>
+    <div class="alert alert-info">
+        <h5>Import Format</h5>
+        <p>Each line represents one tab. Fields are separated by pipes (|)</p>
+        <p><strong>Format:</strong> Artist|Song|Key|Type|Content</p>
+        <p><strong>Example:</strong> Bob Dylan|Blowin' in the Wind|C|diatonic|-4 -4 5 -5 -4...</p>
+    </div>
+    
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.import_data.label }}
+            {{ form.import_data(class="form-control", rows=15) }}
+            {% for error in form.import_data.errors %}
+                <small class="text-danger">{{ error }}</small>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary">Import Tabs</button>
+    </form>
+</div>
+{% endblock %}

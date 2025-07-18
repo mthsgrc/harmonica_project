@@ -1,0 +1,87 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4">
+  <h1>Add New Harmonica Tab</h1>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        {{ form.artist.label }} {{ form.artist(class="form-control",
+        placeholder="Artist name") }} {% for error in form.artist.errors %}
+        <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+      <div class="form-group col-md-6">
+        {{ form.song.label }} {{ form.song(class="form-control",
+        placeholder="Song title") }} {% for error in form.song.errors %}
+        <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-md-3">
+        {{ form.difficulty.label }} {{ form.difficulty(class="form-control") }}
+      </div>
+      <div class="form-group col-md-3">
+        {{ form.genre.label }} {{ form.genre(class="form-control",
+        placeholder="e.g., Blues, Rock") }}
+      </div>
+      <div class="form-group col-md-3">
+        {{ form.harp_type.label }} {{ form.harp_type(class="form-control") }}
+      </div>
+      <div class="form-group col-md-3">
+        {{ form.harp_key.label }} {{ form.harp_key(class="form-control") }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      {{ form.youtube_link.label }} {{ form.youtube_link(class="form-control",
+      placeholder="https://www.youtube.com/watch?v=...") }} {% for error in
+      form.youtube_link.errors %}
+      <small class="text-danger">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="form-group">
+      {{ form.content.label }} {{ form.content(class="form-control", rows=15,
+      placeholder="Enter harmonica tab here...") }}
+      <small class="form-text text-muted">
+        Use standard harmonica tab notation. Example: -2 -3' -3 -4 -4
+      </small>
+      {% for error in form.content.errors %}
+      <small class="text-danger">{{ error }}</small>
+      {% endfor %}
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add Tab
+      </button>
+      <a href="{{ url_for('main.all_tabs') }}" class="btn btn-secondary">
+        Cancel
+      </a>
+    </div>
+    <div class="form-group">
+      {{ form.content.label }} {{ form.content(class="form-control", rows=15,
+      placeholder="Enter harmonica tab here...", data_editor="markdown") }}
+      <small class="form-text text-muted">
+        Supports
+        <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank"
+          >Markdown</a
+        >. Example: **Bold text** for emphasis, `-2 -3` for code blocks
+      </small>
+      {% for error in form.content.errors %}
+      <small class="text-danger">{{ error }}</small>
+      {% endfor %}
+
+      <div class="mt-2">
+        <strong>Preview:</strong>
+        <div id="content-preview" class="border p-2 mt-1 bg-light"></div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='tab_form.js') }}"></script>
+{% endblock %}
