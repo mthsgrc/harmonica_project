@@ -2,7 +2,6 @@
 
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from app.forms import BulkImportForm
 from .decorators import admin_required, editor_required, roles_required
 from .forms import EditTabForm, AddTabForm
 from .models import Tab, User, db
@@ -259,43 +258,3 @@ def add_tab():
     
     return render_template('add_tab.html', form=form)
 
-@main.route('/bulk-import', methods=['GET', 'POST'])
-@roles_required('admin')
-def bulk_import():
-    form = BulkImportForm()
-    
-    if form.validate_on_submit():
-        lines = form.import_data.data.split('\n')
-        imported = 0
-        errors = []
-        
-        for i, line in enumerate(lines, 1):
-            parts = line.split('|')
-            if len(parts) < 5:
-                errors.append(f"Line {i}: Not enough fields")
-                continue
-                
-            try:
-                new_tab = Tab(
-                    artist=parts[0].strip(),
-                    song=parts[1].strip(),
-                    harp_key=parts[2].strip(),
-                    harp_type=parts[3].strip(),
-                    content=parts[4].strip(),
-                    created_at=datetime.utcnow()
-                )
-                db.session.add(new_tab)
-                imported += 1
-            except Exception as e:
-                errors.append(f"Line {i}: {str(e)}")
-        
-        db.session.commit()
-        flash(f'Successfully imported {imported} tabs. {len(errors)} errors occurred.', 
-              'success' if not errors else 'warning')
-        
-        if errors:
-            flash('Errors:<br>' + '<br>'.join(errors), 'error')
-        
-        return redirect(url_for('main.all_tabs'))
-    
-    return render_template('bulk_import.html', form=form)    

@@ -333,3 +333,28 @@ form label {
     font-size: 15px;
     line-height: 1.5;
 }
+
+.user-info {
+    text-align: right;
+}
+
+.container > h1 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.all-tabs-search {
+  margin: 0 auto;
+  text-align: center;
+  width: 100%;;
+}
+
+
+
+.card-body 
+{
+  display: inline-block;
+	margin: 0 auto;
+	padding: 0;
+	box-sizing: border-box;
+}

@@ -111,16 +111,6 @@ class AddTabForm(FlaskForm):
     ])
     submit = SubmitField('Add Tab')
 
-class BulkImportForm(FlaskForm):
-    import_data = TextAreaField('Import Data', validators=[DataRequired()], 
-                               description="Format: Artist|Song|Key|Type|Content")
-    submit = SubmitField('Import Tabs')
-
-
-
-
-
-
 
 
 
