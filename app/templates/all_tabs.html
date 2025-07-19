@@ -41,6 +41,16 @@
                         <a class=""btn btn-sm btn-info" href="{{ url_for('main.add_tab') }}">Add Tab</a>
                         <a href="{{ url_for('main.view_tab', tab_id=tab.id) }}" 
                            class="btn btn-sm btn-info">View</a>
+                    
+                           {% if current_user.role in ['admin', 'editor'] %}
+                           <div>
+                               <form method="POST" action="{{ url_for('main.delete_tab', tab_id=tab.id) }}" 
+                                     class="d-inline" onsubmit="return confirm('Delete this tab permanently?');">
+                                   <input type="submit" class="btn btn-sm btn-danger">Delete Tab</input>
+                               </form>
+                           </div>
+                           {% endif %}
+
                         <a href="{{ url_for('main.edit_tab', tab_id=tab.id) }}" 
                            class="btn btn-sm btn-primary">Edit</a>
                     </td>

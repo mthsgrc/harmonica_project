@@ -81,16 +81,6 @@ def toggle_favorite(tab_id):
     return redirect(request.referrer or url_for('main.index'))
 
 
-# @main.route('/edit/<int:tab_id>', methods=['GET', 'POST'])
-# @editor_required
-# def edit_tab(tab_id):
-#     tab = Tab.query.get_or_404(tab_id)
-#     if request.method == 'POST':
-#         # Update tab logic
-#         pass
-#     return render_template('edit_tab.html', tab=tab)
-
-
 @main.route('/favorites')
 @login_required
 def favorites():
@@ -265,7 +255,7 @@ def add_tab():
         db.session.add(new_tab)
         db.session.commit()
         flash(f'Tab "{form.song.data}" by {form.artist.data} added successfully!', 'success')
-        return redirect(url_for('main.tab_detail', tab_id=new_tab.id))
+        return redirect(url_for('main.view_tab', tab_id=new_tab.id))
     
     return render_template('add_tab.html', form=form)
 
