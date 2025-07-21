@@ -52,12 +52,12 @@
           >
             View Tab
           </a>
-          <a
-            href="{{ url_for('main.toggle_favorite', tab_id=tab.id) }}"
-            class="btn btn-sm btn-outline-danger"
-          >
-            ★ Remove
-          </a>
+              <form method="POST" action="{{ url_for('main.toggle_favorite', tab_id=tab.id) }}">
+                      <button type="submit" class="btn btn-sm btn-outline-danger favorite-btn">
+                ☆ Remove
+                      </button>
+
+          </form>  
         </div>
       </div>
     </div>
