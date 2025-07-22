@@ -261,6 +261,14 @@ footer {
   .favorites-list {
     grid-template-columns: 1fr;
   }
+  
+  .font-controls {
+    flex-wrap: wrap;
+  } 
+
+  .font-controls button {
+      flex: 1 0 30%;
+  }
 
   .tab-content {
     font-size: 0.9rem; /* Better mobile readability */
@@ -399,4 +407,32 @@ form label {
 /* Contrast check for text */
 .bg-primary, .bg-secondary {
   color: white !important;
+}
+
+/* Font Controls */
+.font-controls {
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    margin-top: 10px;
+}
+
+.font-controls button {
+    flex: 1;
+    max-width: 120px;
+}
+
+/* Tab Content */
+.tab-content {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 25px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    line-height: 1.6;
+    font-size: 16px; /* Default size */
+    overflow-x: auto;
 }

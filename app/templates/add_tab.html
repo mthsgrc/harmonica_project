@@ -53,6 +53,20 @@
       <small class="text-danger">{{ error }}</small>
       {% endfor %}
     </div>
+    
+    <div class="font-controls mb-2">
+      <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustEditorFontSize(-1)">
+          <i class="fas fa-minus"></i>
+      </button>
+      <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustEditorFontSize(0)">
+          <i class="fas fa-text-height"></i>
+      </button>
+      <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adjustEditorFontSize(1)">
+          <i class="fas fa-plus"></i>
+      </button>
+  </div>
+  
+  <textarea id="content" name="content" class="form-control" rows="20" style="font-family: monospace; font-size: 16px;">{{ form.content.data }}</textarea>
 
     <div class="form-group">
       <button type="submit" class="btn btn-primary">
@@ -86,4 +100,5 @@
 </div>
 {% endblock %} {% block scripts %}
 <script src="{{ url_for('static', filename='tab_form.js') }}"></script>
+
 {% endblock %}

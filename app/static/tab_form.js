@@ -44,3 +44,14 @@ if (contentField && contentPreview) {
         contentPreview.innerHTML = html;
     });
 }
+
+let editorFontSize = 16;
+
+function adjustEditorFontSize(change) {
+    const textarea = document.getElementById('content');
+    if (change === 0) {
+        editorFontSize = 16; // Reset
+    } else {
+        editorFontSize = Math.min(24, Math.max(12, editorFontSize + change));
+    }
+    textarea.style.fontSize = `${editorFontSize}px`;

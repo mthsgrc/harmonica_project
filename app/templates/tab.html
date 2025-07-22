@@ -12,7 +12,25 @@
                 <p><a href="{{ tab.youtube_link }}" target="_blank">Watch on YouTube</a></p>
             {% endif %}
         </div>
-        
+
+        <div class="font-controls mb-3">
+            <button id="decrease-font" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-minus"></i> Smaller
+            </button>
+            <button id="reset-font" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-text-height"></i> Reset
+            </button>
+            <button id="increase-font" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-plus"></i> Larger
+            </button>
+            <div class="ml-auto text-muted small align-self-center">
+                <i class="fas fa-keyboard"></i> Shortcuts: Ctrl + +/-
+            </div>
+            <div class="font-size-indicator ml-2 align-self-center">
+                <span id="font-size-value">16</span>px
+            </div>
+        </div>
+
         <div class="tab-content">
             <pre>{{ tab.content }}</pre>
         </div>
@@ -42,27 +60,6 @@
 
     <p><a href="{{ url_for('main.index') }}">&larr; Back to all tabs</a></p>
     
+    <script src="{{ url_for('static', filename='tab_js.js') }}"></script>
 
-    <script>
-        document.querySelectorAll('.favorite-btn').forEach(btn => {
-            btn.addEventListener('click', async function(e) {
-                e.preventDefault();
-                const form = this.closest('form');
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Content-Type': 'application/json'
-                    }
-                });
-                const data = await response.json();
-                
-                if (data.action === 'added') {
-                    this.innerHTML = '★ Unfavorite';
-                } else {
-                    this.innerHTML = '☆ Favorite';
-                }
-            });
-        });
-    </script>
 {% endblock %}
