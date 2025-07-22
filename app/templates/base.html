@@ -20,6 +20,7 @@
             <div class="container">
                 <form class="d-flex position-relative" action="{{ url_for('main.search') }}" method="get">
                     <input class="form-control me-2" id="searchbox" autofocus type="search" name="q" placeholder="Search tabs..." value="{{ request.args.get('q', '') }}">
+                    <button type="button" id="clear-search" class="btn-close position-absolute" style="right: 95px; top: 56%; transform: translateY(-60%); display: none; z-index: 10;" aria-label="Clear search"></button>
                     <button class="btn btn-primary" type="submit">Search</button>
                 </form>
             </div>
@@ -59,4 +60,32 @@
 
    
 </body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchBox = document.getElementById('searchbox');
+            const clearButton = document.getElementById('clear-search');
+            
+            // Show/hide clear button based on input content
+            function toggleClearButton() {
+                if (searchBox.value.length > 0) {
+                    clearButton.style.display = 'block';
+                } else {
+                    clearButton.style.display = 'none';
+                }
+            }
+            
+            // Initial check on page load
+            toggleClearButton();
+            
+            // Show/hide clear button as user types
+            searchBox.addEventListener('input', toggleClearButton);
+            
+            // Clear the search box when clear button is clicked
+            clearButton.addEventListener('click', function() {
+                searchBox.value = '';
+                clearButton.style.display = 'none';
+                searchBox.focus();
+            });
+        });
+    </script>
 </html>
