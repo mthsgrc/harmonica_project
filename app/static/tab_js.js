@@ -35,13 +35,13 @@ document.addEventListener('DOMContentLoaded', function() {
             currentSize = newSize;
             applyFontSize(currentSize);
         }
-        document.getElementById('font-size-value').textContent = size;
+        document.getElementById('font-size-value').textContent = currentSize;
     }
     
     function resetFontSize() {
         currentSize = defaultSize;
         applyFontSize(currentSize);
-        // document.getElementById('font-size-value').textContent = currentSize;
+        document.getElementById('font-size-value').textContent = currentSize;
 
     }
     
