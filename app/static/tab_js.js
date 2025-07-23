@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function resetFontSize() {
         currentSize = defaultSize;
         applyFontSize(currentSize);
+        // document.getElementById('font-size-value').textContent = currentSize;
+
     }
     
     // Add keyboard shortcuts
