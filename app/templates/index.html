@@ -3,21 +3,52 @@
 {% block content %}
     <h2>{% if query %}Search Results for "{{ query }}"{% else %}All Tabs{% endif %}</h2>
     
+    <!-- Current Sort Display -->
+    <div class="alert alert-info">
+        <strong>Currently sorted by:</strong> 
+        {% if sort_by == 'artist' %}Artist (A-Z){% endif %}
+        {% if sort_by == 'song' %}Song Title (A-Z){% endif %}
+        {% if sort_by == 'difficulty' %}Difficulty{% endif %}
+        {% if sort_by == 'key' %}Key{% endif %}
+        {% if sort_by == 'recent' %}Most Recent{% endif %}
+        {% if sort_by == 'oldest' %}Oldest First{% endif %}
+    </div>
+    
+    <!-- Active Filters Display -->
+    {% if request.args.get('difficulty') or request.args.get('harp_type') or request.args.get('harp_key') %}
+        <div class="alert alert-info d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Active Filters:</strong>
+                {% if request.args.get('difficulty') %}
+                    <span class="badge bg-primary me-1">Difficulty: {{ request.args.get('difficulty') }}</span>
+                {% endif %}
+                {% if request.args.get('harp_type') %}
+                    <span class="badge bg-primary me-1">Harp: {{ request.args.get('harp_type') }}</span>
+                {% endif %}
+                {% if request.args.get('harp_key') %}
+                    <span class="badge bg-primary me-1">Key: {{ request.args.get('harp_key') }}</span>
+                {% endif %}
+            </div>
+            <a href="{{ url_for('main.search') }}{% if query %}?q={{ query }}{% endif %}" class="btn btn-sm btn-outline-secondary">Clear Filters</a>
+        </div>
+    {% endif %}
+    
     <div class="tabs-list">
         {% for tab in tabs.items %}
             <div class="tab-card">
                 <h3><a href="{{ url_for('main.view_tab', tab_id=tab.id) }}">{{ tab.song }}</a></h3>
                 <p><strong>Artist:</strong> {{ tab.artist }}</p>
-                <p><strong>Key:</strong> {{ tab.key }} | <strong>Harp:</strong> {{ tab.harp_type }}</p>
+                <p><strong>Key:</strong> {{ tab.harp_key }} | <strong>Harp:</strong> {{ tab.harp_type }} {% if tab.difficulty %}| <strong>Difficulty:</strong> {{ tab.difficulty }}{% endif %}</p>
+                {% if tab.genre %}<p><strong>Genre:</strong> {{ tab.genre }}</p>{% endif %}
             </div>
         {% else %}
-            <p>No tabs found.</p>
+            <p>No tabs found matching your criteria.</p>
         {% endfor %}
     </div>
     
     <div class="pagination">
         {% if tabs.has_prev %}
-            <a href="{{ url_for('main.index', page=tabs.prev_num) }}{% if query %}&q={{ query }}{% endif %}">&laquo; Previous</a>
+            <a href="{{ url_for('main.index', page=tabs.prev_num) }}{% if query %}?q={{ query }}{% endif %}{% if request.args.get('difficulty') %}&difficulty={{ request.args.get('difficulty') }}{% endif %}{% if request.args.get('harp_type') %}&harp_type={{ request.args.get('harp_type') }}{% endif %}{% if request.args.get('harp_key') %}&harp_key={{ request.args.get('harp_key') }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">&laquo; Previous</a>
         {% endif %}
         
         {% for page_num in tabs.iter_pages() %}
@@ -25,7 +56,7 @@
                 {% if tabs.page == page_num %}
                     <strong>{{ page_num }}</strong>
                 {% else %}
-                    <a href="{{ url_for('main.search', page=page_num) }}{% if query %}&q={{ query }}{% endif %}">{{ page_num }}</a>
+                    <a href="{{ url_for('main.search', page=page_num) }}{% if query %}?q={{ query }}{% endif %}{% if request.args.get('difficulty') %}&difficulty={{ request.args.get('difficulty') }}{% endif %}{% if request.args.get('harp_type') %}&harp_type={{ request.args.get('harp_type') }}{% endif %}{% if request.args.get('harp_key') %}&harp_key={{ request.args.get('harp_key') }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">{{ page_num }}</a>
                 {% endif %}
             {% else %}
                 <span>...</span>
@@ -33,7 +64,7 @@
         {% endfor %}
         
         {% if tabs.has_next %}
-            <a href="{{ url_for('main.search', page=tabs.next_num) }}{% if query %}&q={{ query }}{% endif %}">Next &raquo;</a>
+            <a href="{{ url_for('main.search', page=tabs.next_num) }}{% if query %}?q={{ query }}{% endif %}{% if request.args.get('difficulty') %}&difficulty={{ request.args.get('difficulty') }}{% endif %}{% if request.args.get('harp_type') %}&harp_type={{ request.args.get('harp_type') }}{% endif %}{% if request.args.get('harp_key') %}&harp_key={{ request.args.get('harp_key') }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">Next &raquo;</a>
         {% endif %}
     </div>
 {% endblock %}

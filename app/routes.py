@@ -25,8 +25,29 @@ def index():
         page = request.args.get('page', 1, type=int)
         if page < 1:
             page = 1
-        tabs = Tab.query.paginate(page=page, per_page=24)
-        return render_template('index.html', tabs=tabs)
+        sort_by = request.args.get('sort', 'artist')  # Default sort by artist
+        
+        # Build base query with sorting
+        base_query = Tab.query
+        
+        # Apply sorting
+        if sort_by == 'artist':
+            base_query = base_query.order_by(Tab.artist, Tab.song)
+        elif sort_by == 'song':
+            base_query = base_query.order_by(Tab.song, Tab.artist)
+        elif sort_by == 'difficulty':
+            base_query = base_query.order_by(Tab.difficulty, Tab.artist, Tab.song)
+        elif sort_by == 'key':
+            base_query = base_query.order_by(Tab.harp_key, Tab.artist, Tab.song)
+        elif sort_by == 'recent':
+            base_query = base_query.order_by(Tab.created_at.desc())
+        elif sort_by == 'oldest':
+            base_query = base_query.order_by(Tab.created_at)
+        else:  # default to artist
+            base_query = base_query.order_by(Tab.artist, Tab.song)
+        
+        tabs = base_query.paginate(page=page, per_page=24)
+        return render_template('index.html', tabs=tabs, sort_by=sort_by)
     except SQLAlchemyError as e:
         logger.error(f"Database error in index route: {str(e)}")
         flash('An error occurred while loading tabs. Please try again.', 'error')
@@ -66,6 +87,7 @@ def search():
         difficulty = request.args.get('difficulty', '')
         harp_type = request.args.get('harp_type', '')
         harp_key = request.args.get('harp_key', '')
+        sort_by = request.args.get('sort', 'artist')  # Default sort by artist
         
         # Build base query
         base_query = Tab.query
@@ -87,6 +109,22 @@ def search():
         if harp_key and harp_key.lower() != 'any':
             base_query = base_query.filter(Tab.harp_key == harp_key)
         
+        # Apply sorting
+        if sort_by == 'artist':
+            base_query = base_query.order_by(Tab.artist, Tab.song)
+        elif sort_by == 'song':
+            base_query = base_query.order_by(Tab.song, Tab.artist)
+        elif sort_by == 'difficulty':
+            base_query = base_query.order_by(Tab.difficulty, Tab.artist, Tab.song)
+        elif sort_by == 'key':
+            base_query = base_query.order_by(Tab.harp_key, Tab.artist, Tab.song)
+        elif sort_by == 'recent':
+            base_query = base_query.order_by(Tab.created_at.desc())
+        elif sort_by == 'oldest':
+            base_query = base_query.order_by(Tab.created_at)
+        else:  # default to artist
+            base_query = base_query.order_by(Tab.artist, Tab.song)
+        
         # Execute query with pagination
         results = base_query.paginate(page=page, per_page=per_page)
         
@@ -98,6 +136,7 @@ def search():
         return render_template('index.html', 
                              tabs=results, 
                              query=query,
+                             sort_by=sort_by,
                              difficulties=difficulties,
                              harp_types=harp_types,
                              harp_keys=harp_keys,

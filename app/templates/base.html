@@ -32,7 +32,17 @@
                     <div class="collapse mt-2" id="searchFilters">
                         <form class="row g-2" action="{{ url_for('main.search') }}" method="get">
                             <input type="hidden" name="q" value="{{ request.args.get('q', '') }}">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
+                                <select class="form-select form-select-sm" name="sort">
+                                    <option value="artist" {% if request.args.get('sort', 'artist') == 'artist' %}selected{% endif %}>Sort by Artist</option>
+                                    <option value="song" {% if request.args.get('sort') == 'song' %}selected{% endif %}>Sort by Song</option>
+                                    <option value="difficulty" {% if request.args.get('sort') == 'difficulty' %}selected{% endif %}>Sort by Difficulty</option>
+                                    <option value="key" {% if request.args.get('sort') == 'key' %}selected{% endif %}>Sort by Key</option>
+                                    <option value="recent" {% if request.args.get('sort') == 'recent' %}selected{% endif %}>Most Recent</option>
+                                    <option value="oldest" {% if request.args.get('sort') == 'oldest' %}selected{% endif %}>Oldest First</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
                                 <select class="form-select form-select-sm" name="difficulty">
                                     <option value="">All Difficulties</option>
                                     <option value="Beginner" {% if request.args.get('difficulty') == 'Beginner' %}selected{% endif %}>Beginner</option>
@@ -41,7 +51,7 @@
                                     <option value="Expert" {% if request.args.get('difficulty') == 'Expert' %}selected{% endif %}>Expert</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <select class="form-select form-select-sm" name="harp_type">
                                     <option value="">All Harp Types</option>
                                     <option value="Chromatic" {% if request.args.get('harp_type') == 'Chromatic' %}selected{% endif %}>Chromatic</option>
@@ -51,7 +61,7 @@
                                     <option value="Tremolo" {% if request.args.get('harp_type') == 'Tremolo' %}selected{% endif %}>Tremolo</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <select class="form-select form-select-sm" name="harp_key">
                                     <option value="">All Keys</option>
                                     <option value="A" {% if request.args.get('harp_key') == 'A' %}selected{% endif %}>A</option>
@@ -68,8 +78,8 @@
                                     <option value="G#/Ab" {% if request.args.get('harp_key') == 'G#/Ab' %}selected{% endif %}>G#/Ab</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <button class="btn btn-primary btn-sm w-100" type="submit">Apply Filters</button>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary btn-sm w-100" type="submit">Apply Filters & Sort</button>
                             </div>
                         </form>
                     </div>
