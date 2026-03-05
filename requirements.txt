@@ -7,3 +7,6 @@ Flask-Markdown2
 flask-sqlalchemy
 flask_wtf
 werkzeug
+pytest
+pytest-flask
+pytest-cov
