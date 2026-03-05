@@ -6,10 +6,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '.env'))
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'database', 'harmonica_tabs.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    WTF_CSRF_ENABLED = False
-    SECRET_KEY = 'your-secret-key'
+    WTF_CSRF_ENABLED = True
