@@ -62,18 +62,48 @@ def search():
             page = 1
         per_page = 24
         
+        # Get filter parameters
+        difficulty = request.args.get('difficulty', '')
+        harp_type = request.args.get('harp_type', '')
+        harp_key = request.args.get('harp_key', '')
+        
+        # Build base query
+        base_query = Tab.query
+        
+        # Apply text search if query exists
         if query:
-            # Use case-insensitive search with proper wildcards
             search_term = f"%{query}%"
-            results = Tab.query.filter(
+            base_query = base_query.filter(
                 Tab.artist.ilike(search_term) | 
                 Tab.song.ilike(search_term) |
                 Tab.genre.ilike(search_term)
-            ).paginate(page=page, per_page=per_page)
-        else:
-            results = Tab.query.paginate(page=page, per_page=per_page)
+            )
         
-        return render_template('index.html', tabs=results, query=query)
+        # Apply filters
+        if difficulty and difficulty.lower() != 'any':
+            base_query = base_query.filter(Tab.difficulty.ilike(difficulty))
+        if harp_type and harp_type.lower() != 'any':
+            base_query = base_query.filter(Tab.harp_type == harp_type)
+        if harp_key and harp_key.lower() != 'any':
+            base_query = base_query.filter(Tab.harp_key == harp_key)
+        
+        # Execute query with pagination
+        results = base_query.paginate(page=page, per_page=per_page)
+        
+        # Get filter options for template
+        difficulties = ['beginner', 'intermediate', 'advanced', 'expert', 'any']
+        harp_types = ['Chromatic', 'Diatonic', 'Melody Maker', 'Octave', 'Tremolo']
+        harp_keys = ['A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab']
+        
+        return render_template('index.html', 
+                             tabs=results, 
+                             query=query,
+                             difficulties=difficulties,
+                             harp_types=harp_types,
+                             harp_keys=harp_keys,
+                             selected_difficulty=difficulty,
+                             selected_harp_type=harp_type,
+                             selected_harp_key=harp_key)
     except SQLAlchemyError as e:
         logger.error(f"Database error in search route for query '{query}': {str(e)}")
         flash('An error occurred while searching. Please try again.', 'error')
