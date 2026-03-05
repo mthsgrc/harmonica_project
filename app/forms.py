@@ -7,13 +7,14 @@ import re
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', 
-                           validators=[DataRequired(), Length(min=3, max=20)])
+                           validators=[DataRequired(), Length(min=3, max=20), 
+                           Regexp(r'^[a-zA-Z0-9_]+$', message='Username can only contain letters, numbers, and underscores')])
     email = StringField('Email', 
-                        validators=[DataRequired(), Email()])
+                        validators=[DataRequired(), Email(), Length(max=120)])
     password = PasswordField('Password', 
-                             validators=[DataRequired(), Length(min=4)])
+                             validators=[DataRequired(), Length(min=8, message='Password must be at least 8 characters long')])
     confirm_password = PasswordField('Confirm Password', 
-                                     validators=[DataRequired(), EqualTo('password')])
+                                     validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
     submit = SubmitField('Register')
 
     def validate_username(self, username):
@@ -26,10 +27,23 @@ class RegistrationForm(FlaskForm):
         if user:
             raise ValidationError('That email is already registered.')
 
+    def validate_password(self, password):
+        # At least one digit
+        if not re.search(r"\d", password.data):
+            raise ValidationError('Password must contain at least one digit')
+        # At least one uppercase letter
+        if not re.search(r"[A-Z]", password.data):
+            raise ValidationError('Password must contain at least one uppercase letter')
+        # At least one special character
+        if not re.search(r"[ !@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]", password.data):
+            raise ValidationError('Password must contain at least one special character')
+
 
 class EditTabForm(FlaskForm):
-    artist = StringField('Artist', validators=[DataRequired()])
-    song = StringField('Song', validators=[DataRequired()])
+    artist = StringField('Artist', validators=[DataRequired(), Length(max=200), 
+                        Regexp(r'^[a-zA-Z0-9\s\-&]+$', message='Artist name contains invalid characters')])
+    song = StringField('Song', validators=[DataRequired(), Length(max=200),
+                  Regexp(r'^[a-zA-Z0-9\s\-&\'()]+$', message='Song title contains invalid characters')])
     difficulty = SelectField('Difficulty', choices=[
         ('', 'Select difficulty'),
         ('beginner', 'Beginner'),
@@ -38,7 +52,8 @@ class EditTabForm(FlaskForm):
         ('expert', 'Expert'), 
         ('any', 'Any'),
     ])
-    genre = StringField('Genre')
+    genre = StringField('Genre', validators=[Optional(), Length(max=100),
+                        Regexp(r'^[a-zA-Z0-9\s\-&]+$', message='Genre contains invalid characters')])
     harp_type = SelectField('Harp Type', choices=[
         ('Any', 'Any'),
         ('Chromatic', 'Chromatic'),
@@ -64,12 +79,18 @@ class EditTabForm(FlaskForm):
         ('Unknown', 'Unknown')
     ], validators=[DataRequired()])
     content = TextAreaField('Tab Content', validators=[DataRequired()])
-    youtube_link = StringField('YouTube Link')
+    youtube_link = StringField('YouTube Link', validators=[
+        Optional(), 
+        URL(message='Please enter a valid URL'),
+        Regexp(r'(youtube\.com|youtu\.be)', message='Must be a YouTube URL')
+    ])
     submit = SubmitField('Update Tab')
 
 class AddTabForm(FlaskForm):
-    artist = StringField('Artist', validators=[DataRequired(), Length(max=200)])
-    song = StringField('Song Title', validators=[DataRequired(), Length(max=200)])
+    artist = StringField('Artist', validators=[DataRequired(), Length(max=200),
+                        Regexp(r'^[a-zA-Z0-9\s\-&]+$', message='Artist name contains invalid characters')])
+    song = StringField('Song Title', validators=[DataRequired(), Length(max=200),
+              Regexp(r'^[a-zA-Z0-9\s\-&\'()]+$', message='Song title contains invalid characters')])
     difficulty = SelectField('Difficulty', choices=[
         ('', 'Select difficulty'),
         ('beginner', 'Beginner'),
@@ -78,7 +99,8 @@ class AddTabForm(FlaskForm):
         ('expert', 'Expert'), 
         ('any', 'Any'),
     ], validators=[Optional()])
-    genre = StringField('Genre', validators=[Optional(), Length(max=100)])
+    genre = StringField('Genre', validators=[Optional(), Length(max=100),
+                        Regexp(r'^[a-zA-Z0-9\s\-&]+$', message='Genre contains invalid characters')])
     harp_type = SelectField('Harp Type', choices=[
         ('Any', 'Any'),
         ('Chromatic', 'Chromatic'),
@@ -112,24 +134,3 @@ class AddTabForm(FlaskForm):
     submit = SubmitField('Add Tab')
 
 
-
-
-
-
-
-
-
-    
-########   Add to RegistrationForm class  #######
-########  Add Password Strength Validation (Optional)   #######
-
-# def validate_password(self, password):
-#     # At least one digit
-#     if not re.search(r"\d", password.data):
-#         raise ValidationError('Password must contain at least one digit')
-#     # At least one uppercase letter
-#     if not re.search(r"[A-Z]", password.data):
-#         raise ValidationError('Password must contain at least one uppercase letter')
-#     # At least one special character
-#     if not re.search(r"[ !@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?]", password.data):
-#         raise ValidationError('Password must contain at least one special character') 
