@@ -43,3 +43,6 @@ def create_app(config_name=None):
     markdown(app)
     
     return app
+
+# Create application instance for Gunicorn
+app = create_app()
