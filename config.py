@@ -10,5 +10,19 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'database', 'harmonica_tabs.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
     WTF_CSRF_ENABLED = True
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+    FLASK_ENV = 'development'
+
+class ProductionConfig(Config):
+    DEBUG = False
+    FLASK_ENV = 'production'
+    # Production database will be set via DATABASE_URL environment variable
+
+config = {
+    'development': DevelopmentConfig,
+    'production': ProductionConfig,
+    'default': DevelopmentConfig
+}

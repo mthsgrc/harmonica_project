@@ -10,3 +10,5 @@ werkzeug
 pytest
 pytest-flask
 pytest-cov
+psycopg2-binary
+gunicorn

@@ -2,6 +2,7 @@ import logging
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import text
 from .decorators import admin_required, editor_required, roles_required
 from .forms import EditTabForm, AddTabForm
 from .models import Tab, User, db
@@ -17,6 +18,27 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 logger.addHandler(handler)
+
+
+@main.route('/health')
+def health_check():
+    """Health check endpoint for Render.com"""
+    try:
+        # Test database connection
+        db.session.execute(text('SELECT 1'))
+        return jsonify({
+            'status': 'healthy',
+            'database': 'connected',
+            'timestamp': datetime.utcnow().isoformat()
+        }), 200
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        return jsonify({
+            'status': 'unhealthy',
+            'database': 'disconnected',
+            'timestamp': datetime.utcnow().isoformat(),
+            'error': str(e)
+        }), 503
 
 
 @main.route('/')
