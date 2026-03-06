@@ -20,6 +20,12 @@ class ProductionConfig(Config):
     DEBUG = False
     FLASK_ENV = 'production'
     # Production database will be set via DATABASE_URL environment variable
+    
+    # Session and CSRF settings for production
+    SESSION_COOKIE_SECURE = True  # Only send over HTTPS
+    SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access
+    SESSION_COOKIE_SAMESITE = 'Lax'  # CSRF protection
+    WTF_CSRF_TIME_LIMIT = 3600  # 1 hour CSRF token validity
 
 config = {
     'development': DevelopmentConfig,

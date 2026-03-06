@@ -1,5 +1,5 @@
 import logging
-from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash, abort
+from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash, abort, session
 from flask_login import login_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
@@ -39,6 +39,24 @@ def health_check():
             'timestamp': datetime.utcnow().isoformat(),
             'error': str(e)
         }), 503
+
+
+@main.route('/debug/csrf')
+def debug_csrf():
+    """Debug CSRF token generation (temporary)"""
+    from flask_wtf.csrf import generate_csrf
+    try:
+        csrf_token = generate_csrf()
+        return jsonify({
+            'csrf_token': csrf_token,
+            'session': dict(session) if session else {},
+            'cookies': dict(request.cookies)
+        })
+    except Exception as e:
+        return jsonify({
+            'error': str(e),
+            'session_data': dict(session) if session else {}
+        }), 500
 
 
 @main.route('/')
